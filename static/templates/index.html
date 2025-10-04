@@ -1,4 +1,12 @@
 {% extends 'base.html' %}
 
 {% block main %}
+<div id="map_cont">
+    <div id="map"></div>
+</div>
+<form action='/' method='post'>
+    <input name='latitude' id='latitude' type='hidden'>
+    <input name='longitude' id='longitude' type='hidden'>
+    <button type='submit'>Submit</button>
+</form>
 {% endblock %}

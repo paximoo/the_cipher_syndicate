@@ -15,23 +15,24 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const map = L.map('map').setView([24.5, 73.75], 13);
+            if (document.getElementById('map') != null) {
+                const map = L.map('map').setView([24.5, 73.75], 13);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
 
-            map.on('click', function(e) {
-                const { lat, lng } = e.latlng;
-            });
+                map.on('click', function(e) {
+                    const { lat, lng } = e.latlng;
+                    document.getElementById('latitude').value = lat;
+                    document.getElementById('longitude').value = lng;
+                });
+            }
         });
     </script>
 
 </head>
 <body>
     <main>{% block main %}{% endblock %}</main>
-    <div id="map_cont">
-        <div id="map"></div>
-    </div>
 </body>
 </html>

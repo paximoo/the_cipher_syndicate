@@ -71,6 +71,10 @@ def download():
 
   return send_file('out.csv', as_attachment=True)
 
+@app.route('/about-us')
+def about_us():
+  return render_template('about-us.html')
+
 
 if __name__ == '__main__':
   app.run(port=8080, host='0.0.0.0', debug=True)

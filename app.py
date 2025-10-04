@@ -11,10 +11,10 @@ PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'WD10M', 'WS10M', 'PS'
 def index():
   if request.method == 'POST':
     lat, long, date = request.form.get('latitude'), request.form.get('longitude'), request.form.get('date')
-    date = date[5:]
-    print(lat, long, date)
+    print(lat, long, date[5:])
+    DATA = []
     for i in range(2022, 2024):
-      curr_date = str(i) + date.replace('-', '')#{i}{date.replace('-', '')
+      curr_date = str(i) + date[5:].replace('-', '')#{i}{date.replace('-', '')
       curr_data = {'_': {'_': curr_date[:4]}}
       try:
         curr_data.update(req_get(
@@ -36,14 +36,14 @@ def index():
 
     param_avg = [f"{mean(e):.2f}" for e in param_entries]
     print(param_avg)
-
     print(param_entries)
     
     return render_template('results.html',
       data=DATA,
       params=PARAMETERS,
       param_num=len(PARAMETERS),
-      avgs=param_avg
+      avgs=param_avg,
+      date=date
     )
 
   else:

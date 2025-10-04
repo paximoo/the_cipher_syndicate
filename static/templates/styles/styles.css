@@ -61,6 +61,9 @@ button {
 .card-header {
     background-color: #49bdf2;
 }
+.navbar {
+    justify-content: left;
+}
 /* 
 .details {
     width: 70%;
@@ -81,4 +84,7 @@ button {
 }
 .details p :hover{
     text-decoration: underline;
+}
+.navbar a {
+    font-size: medium;
 }

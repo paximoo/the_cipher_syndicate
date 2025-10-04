@@ -5,7 +5,7 @@ from requests import get as req_get
 
 app = Flask(__name__, template_folder='static//templates')
 DATA = []
-PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'CLOUD_AMT', 'WD10M', 'WS10M', 'PS', 'QV2M']
+PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'WD10M', 'WS10M', 'PS', 'QV2M']
 
 @app.route('/', methods=['POST', 'GET'])
 def index():

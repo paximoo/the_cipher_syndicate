@@ -10,15 +10,16 @@ def index():
     date = date[5:]
     print(lat, long, date)
     data = []
+    PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'CLOUD_AMT', 'WD10M', 'WS10M']
     for i in range(2000, 2002):
       curr_data = req_get(
         'https://power.larc.nasa.gov/api/temporal/daily/point' +
-        f'?parameters=T2M&community=RE&latitude={lat}&longitude={long}&start={i}{date.replace('-', '')}&end={i}{date.replace('-', '')}&format=JSON').json()
+        f'?parameters={','.join(PARAMETERS)}&community=RE&latitude={lat}&longitude={long}&start={i}{date.replace('-', '')}&end={i}{date.replace('-', '')}&format=JSON').json()['properties']['parameter']
       
       data.append(curr_data)
     
     print(data)
-    return render_template('results.html')
+    return render_template('results.html', data=data, params=PARAMETERS)
 
   else:
     return render_template('index.html')

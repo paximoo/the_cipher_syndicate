@@ -8,6 +8,9 @@
         <h2>{{ avgs[loop.index0] }}</h2>
     {% endfor %}
 </div>
+<form action='/download' method='post'>
+    <button type='submit'>Download data as CSV</button>
+</form> 
 <div class="table-container">
     <table class="table">
         <tr>

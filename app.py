@@ -1,8 +1,11 @@
+import csv
 from statistics import mean
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, send_file
 from requests import get as req_get
 
 app = Flask(__name__, template_folder='static//templates')
+DATA = []
+PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'CLOUD_AMT', 'WD10M', 'WS10M', 'PS', 'QV2M']
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -10,8 +13,6 @@ def index():
     lat, long, date = request.form.get('latitude'), request.form.get('longitude'), request.form.get('date')
     date = date[5:]
     print(lat, long, date)
-    data = []
-    PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'CLOUD_AMT', 'WD10M', 'WS10M', 'PS', 'QV2M']
     for i in range(2022, 2024):
       curr_date = str(i) + date.replace('-', '')#{i}{date.replace('-', '')
       curr_data = {'_': {'_': curr_date[:4]}}
@@ -23,13 +24,13 @@ def index():
       except Exception as e:
         print(e)
        
-      data.append(curr_data)
+      DATA.append(curr_data)
 
     param_entries = []
     for i in range(len(PARAMETERS)):
       param_entries.append([])
 
-    for r in data:
+    for r in DATA:
       for index, field in enumerate(list(r.items())[1:]):
         param_entries[index] += list(field[1].values())
 
@@ -39,7 +40,7 @@ def index():
     print(param_entries)
     
     return render_template('results.html',
-      data=data,
+      data=DATA,
       params=PARAMETERS,
       param_num=len(PARAMETERS),
       avgs=param_avg
@@ -47,6 +48,29 @@ def index():
 
   else:
     return render_template('index.html')
+
+@app.route('/download', methods=['POST'])
+def download():
+  with open('out.csv', 'w', newline='') as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames=['Year'] + PARAMETERS)
+    writer.writeheader()
+    for r in DATA:
+      dtw = r.copy()
+
+      for k in dtw.keys():
+        print(dtw[k])
+        dtw[k] = list(dtw[k].items())[0][1]
+
+      print(dtw)
+      dtw.update({'Year': dtw['_']})
+      del dtw['_']
+
+      writer.writerow(dtw)
+
+    print(DATA)
+
+  return send_file('out.csv', as_attachment=True)
+
 
 if __name__ == '__main__':
   app.run(port=8080, host='0.0.0.0', debug=True)

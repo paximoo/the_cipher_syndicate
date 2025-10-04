@@ -6,12 +6,12 @@ from requests import get as req_get
 app = Flask(__name__, template_folder='static//templates')
 DATA = []
 PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'WD10M', 'WS10M', 'PS', 'QV2M']
+LAT, LONG = None, None
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
   if request.method == 'POST':
-    lat, long, date = request.form.get('latitude'), request.form.get('longitude'), request.form.get('date')
-    print(lat, long, date[5:])
+    LAT, LONG, date = request.form.get('latitude'), request.form.get('longitude'), request.form.get('date')
     DATA = []
     for i in range(2022, 2024):
       curr_date = str(i) + date[5:].replace('-', '')#{i}{date.replace('-', '')
@@ -19,7 +19,7 @@ def index():
       try:
         curr_data.update(req_get(
           'https://power.larc.nasa.gov/api/temporal/daily/point' +
-          f'?parameters={','.join(PARAMETERS)}&community=RE&latitude={lat}&longitude={long}&start={curr_date}&end={curr_date}&format=JSON')
+          f'?parameters={','.join(PARAMETERS)}&community=RE&latitude={LAT}&longitude={LONG}&start={curr_date}&end={curr_date}&format=JSON')
           .json()['properties']['parameter'])
       except Exception as e:
         print(e)
@@ -43,7 +43,9 @@ def index():
       params=PARAMETERS,
       param_num=len(PARAMETERS),
       avgs=param_avg,
-      date=date
+      date=date,
+      lat=LAT,
+      long=LONG
     )
 
   else:
@@ -70,6 +72,15 @@ def download():
     print(DATA)
 
   return send_file('out.csv', as_attachment=True)
+
+@app.route('/graph')
+def graph():
+  param = request.args.get('parameter')
+  lat, long = request.args.get('lat'), request.args.get('long')
+  return req_get(
+    'https://power.larc.nasa.gov/api/toolkit/power/visualizations/heatmaps?operation=climatological-days' +
+    f'&start=2000-01-01T00%3A00%3A00&end=2002-01-01T00%3A00%3A00&latitude={lat}&longitude={long}&community=ag&parameter={param}&format=html&units=metric'
+  ).text
 
 @app.route('/about-us')
 def about_us():

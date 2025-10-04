@@ -1,21 +1,24 @@
 {% extends 'base.html' %}
 
 {% block main %}
-<table>
-    <tr>
-        <th>Year</th>
-        {% for param in params %}
-            <th>{{ param }}</th>
-        {% endfor %}
-    </tr>
-    {% for reading in data %}
+<center>
+<div class="table-container">
+    <table class="table">
         <tr>
-            {% for _, entry in reading.items() %}
-                {% for _, value in entry.items() %}
-                    <td>{{ value }}</td>
+            {% for param in params %}
+                <th scope="col">{{ param }}</th>
+            {% endfor %}
+        </tr>
+        {% for reading in data %}
+        <tr>
+            {% for param, entry in reading.items() %}
+                {% for date, value in entry.items() %}
+                    <td scope="row">{{ value }}</td>
                 {% endfor %}
             {% endfor %}
         </tr>
-    {% endfor %}
-</table>
+        {% endfor %}
+    </table>
+</div>
+</center>
 {% endblock %}

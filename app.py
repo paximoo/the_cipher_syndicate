@@ -1,3 +1,4 @@
+from statistics import mean
 from flask import Flask, render_template, request, redirect
 from requests import get as req_get
 
@@ -10,32 +11,39 @@ def index():
     date = date[5:]
     print(lat, long, date)
     data = []
-    PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'CLOUD_AMT', 'WD10M', 'WS10M']
-    for i in range(2000, 2002):
+    PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'CLOUD_AMT', 'WD10M', 'WS10M', 'PS', 'QV2M']
+    for i in range(2022, 2024):
       curr_date = str(i) + date.replace('-', '')#{i}{date.replace('-', '')
       curr_data = {'_': {'_': curr_date[:4]}}
-      curr_data.update(req_get(
-        'https://power.larc.nasa.gov/api/temporal/daily/point' +
-        f'?parameters={','.join(PARAMETERS)}&community=RE&latitude={lat}&longitude={long}&start={curr_date}&end={curr_date}&format=JSON')
-        .json()['properties']['parameter'])
+      try:
+        curr_data.update(req_get(
+          'https://power.larc.nasa.gov/api/temporal/daily/point' +
+          f'?parameters={','.join(PARAMETERS)}&community=RE&latitude={lat}&longitude={long}&start={curr_date}&end={curr_date}&format=JSON')
+          .json()['properties']['parameter'])
+      except Exception as e:
+        print(e)
        
-      print('BEFORE: ', curr_data)
-      print('AFTER: ', curr_data)
       data.append(curr_data)
 
-    param_entries = dict.fromkeys(PARAMETERS, [])
-    print(param_entries)
-    # for record in data:
-    #   for param, value in record.items():
-    #     print(param, value)
-    #     print(param_entries[param])
-    #     param_entries[param] += [value]
-        # print(param, value.items()[0][1])
+    param_entries = []
+    for i in range(len(PARAMETERS)):
+      param_entries.append([])
+
+    for r in data:
+      for index, field in enumerate(list(r.items())[1:]):
+        param_entries[index] += list(field[1].values())
+
+    param_avg = [f"{mean(e):.2f}" for e in param_entries]
+    print(param_avg)
 
     print(param_entries)
     
-    # print(data)
-    return render_template('results.html', data=data, params=PARAMETERS)
+    return render_template('results.html',
+      data=data,
+      params=PARAMETERS,
+      param_num=len(PARAMETERS),
+      avgs=param_avg
+    )
 
   else:
     return render_template('index.html')

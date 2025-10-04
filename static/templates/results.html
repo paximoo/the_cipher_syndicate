@@ -2,10 +2,15 @@
 
 {% block main %}
 <center>
-<div>
+
+<div class="grid">
     {% for param in params %}
-        <h1>{{ param }}</h1>
-        <h2>{{ avgs[loop.index0] }}</h2>
+    <div class="card border-dark mb-3">
+        <div class="card-header">{{ param }}</div>
+            <div class="card-body text-dark">
+                <h5 class="card-title">{{ avgs[loop.index0] }}</h5>
+            </div>
+    </div>    
     {% endfor %}
 </div>
 <form action='/download' method='post'>

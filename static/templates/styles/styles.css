@@ -45,3 +45,19 @@ button {
     border: solid grey .5px;
     text-align: center;
 }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 2fr);
+    padding: 10px;
+    margin: 10px;
+    width: 70%;
+    gap: 10px;
+}
+
+.card {
+    background-color: #BCE7FA;
+}
+.card-header {
+    background-color: #49bdf2;
+}

@@ -3,14 +3,15 @@
 {% block main %}
 <table>
     <tr>
+        <th>Year</th>
         {% for param in params %}
             <th>{{ param }}</th>
         {% endfor %}
     </tr>
     {% for reading in data %}
         <tr>
-            {% for param, entry in reading.items() %}
-                {% for date, value in entry.items() %}
+            {% for _, entry in reading.items() %}
+                {% for _, value in entry.items() %}
                     <td>{{ value }}</td>
                 {% endfor %}
             {% endfor %}

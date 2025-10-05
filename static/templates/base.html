@@ -18,8 +18,10 @@
         if (document.getElementById('map') != null) {
             const map = L.map('map').setView([0, 0], 1);
             navigator.geolocation.getCurrentPosition(function(location) {
-                console.log(location)
-                map.setView([location.coords.latitude, location.coords.longitude], 10)
+                lat = location.coords.latitude
+                lng = location.coords.longitude
+                map.setView([lat, lng], 10)
+                marker = L.marker([lat, lng]).addTo(map);
             });
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

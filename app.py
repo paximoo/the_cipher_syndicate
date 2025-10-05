@@ -4,7 +4,8 @@ from flask import Flask, render_template, request, send_file
 from requests import get as req_get
 
 app = Flask(__name__, template_folder='static//templates')
-DATA = []
+DATA = {}
+PARAM_ENTRIES = []
 PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'WD10M', 'WS10M', 'PS', 'QV2M']
 LAT, LONG = None, None
 START_YEAR, END_YEAR = 1990, 2025
@@ -13,13 +14,11 @@ START_YEAR, END_YEAR = 1990, 2025
 def index():
   if request.method == 'POST':
     LAT, LONG, date = request.form.get('latitude'), float(request.form.get('longitude'))%360, request.form.get('date')
-    print('\n'*4, date, '\n'*4)
-    print(LAT, LONG)
     RESPONSE = req_get(
       'https://power.larc.nasa.gov/api/temporal/daily/point' +
       f'?parameters={','.join(PARAMETERS)}&community=RE&latitude={LAT}&longitude={LONG if LONG <= 180 else 360-LONG}&start={START_YEAR}0101&end={END_YEAR}0101&format=JSON'
     ).json()
-    print(RESPONSE)
+
     RESPONSE = RESPONSE['properties']['parameter']
 
     DATA = {}
@@ -29,22 +28,17 @@ def index():
         if day[4:] == date.replace('-','')[4:]:
           DATA[param][day] = value
 
-    print('\n'*4, DATA, '\n'*4)
-
-    param_entries = []
     for i in range(len(PARAMETERS)):
-      param_entries.append([])
+      PARAM_ENTRIES.append([])
 
     for index, (param, vals) in enumerate(list(DATA.items())):
-      print('VAALSVALSVASL: ', vals.items())
       for _, value in enumerate(list(vals.items())):
-        param_entries[index] += [value[1]]
+        PARAM_ENTRIES[index] += [value[1]]
 
-    print(param_entries)
-    param_avg = [f"{mean(e):.2f}" for e in param_entries]
+    param_avg = [f"{mean(e):.2f}" for e in PARAM_ENTRIES]
     
     return render_template('results.html',
-      param_entries=param_entries,
+      param_entries=PARAM_ENTRIES,
       params=PARAMETERS,
       param_num=len(PARAMETERS),
       avgs=param_avg,
@@ -59,23 +53,15 @@ def index():
 
 @app.route('/download', methods=['POST'])
 def download():
-  print(DATA)
   with open('out.csv', 'w', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=['Year'] + PARAMETERS)
     writer.writeheader()
-    for r in DATA:
-      dtw = r.copy()
+    for rec_ind in range(len(PARAM_ENTRIES[0])):
+      row = {'Year': START_YEAR + rec_ind}
+      for par_ind, param in enumerate(PARAMETERS):
+        row[param] = PARAM_ENTRIES[par_ind][rec_ind]
 
-      for k in dtw.keys():
-        print(dtw[k])
-        dtw[k] = list(dtw[k].items())[0][1]
-
-      print(dtw)
-      dtw.update({'Year': dtw['_']})
-      del dtw['_']
-
-      writer.writerow(dtw)
-
+      writer.writerow(row)
 
   return send_file('out.csv', as_attachment=True)
 

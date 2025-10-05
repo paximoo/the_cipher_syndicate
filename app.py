@@ -13,6 +13,7 @@ def index():
     lat, long, date = request.form.get('latitude'), request.form.get('longitude'), request.form.get('date')
     date = date[5:]
     print(lat, long, date)
+    DATA = []
     for i in range(2022, 2024):
       curr_date = str(i) + date.replace('-', '')#{i}{date.replace('-', '')
       curr_data = {'_': {'_': curr_date[:4]}}

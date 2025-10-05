@@ -5,8 +5,10 @@ from requests import get as req_get
 
 app = Flask(__name__, template_folder='static//templates')
 DATA = {}
-PARAM_ENTRIES = []
 PARAMETERS = ['T2M', 'T2M_MAX', 'T2M_MIN', 'PRECTOTCORR', 'WD10M', 'WS10M', 'PS', 'QV2M']
+PARAM_ENTRIES = []
+for i in range(len(PARAMETERS)):
+  PARAM_ENTRIES.append([])
 LAT, LONG = None, None
 START_YEAR, END_YEAR = 1990, 2025
 
@@ -27,9 +29,6 @@ def index():
       for day, value in recs.items():
         if day[4:] == date.replace('-','')[4:]:
           DATA[param][day] = value
-
-    for i in range(len(PARAMETERS)):
-      PARAM_ENTRIES.append([])
 
     for index, (param, vals) in enumerate(list(DATA.items())):
       for _, value in enumerate(list(vals.items())):

@@ -2,17 +2,24 @@
 
 {% block main %}
 <center>
+<div>
+    {% for param in params %}
+        <h1>{{ param }}</h1>
+        <h2>{{ avgs[loop.index0] }}</h2>
+    {% endfor %}
+</div>
 <div class="table-container">
     <table class="table">
         <tr>
+            <th>Year</th>
             {% for param in params %}
                 <th scope="col">{{ param }}</th>
             {% endfor %}
         </tr>
         {% for reading in data %}
         <tr>
-            {% for param, entry in reading.items() %}
-                {% for date, value in entry.items() %}
+            {% for _, entry in reading.items() %}
+                {% for _, value in entry.items() %}
                     <td scope="row">{{ value }}</td>
                 {% endfor %}
             {% endfor %}

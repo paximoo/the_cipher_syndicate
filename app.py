@@ -12,7 +12,6 @@ LAT, LONG = None, None
 def index():
   if request.method == 'POST':
     LAT, LONG, date = request.form.get('latitude'), request.form.get('longitude'), request.form.get('date')
-    DATA = []
     for i in range(2022, 2024):
       curr_date = str(i) + date[5:].replace('-', '')#{i}{date.replace('-', '')
       curr_data = {'_': {'_': curr_date[:4]}}
@@ -53,6 +52,7 @@ def index():
 
 @app.route('/download', methods=['POST'])
 def download():
+  print(DATA)
   with open('out.csv', 'w', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=['Year'] + PARAMETERS)
     writer.writeheader()
@@ -69,17 +69,16 @@ def download():
 
       writer.writerow(dtw)
 
-    print(DATA)
 
   return send_file('out.csv', as_attachment=True)
 
-@app.route('/graph')
+@app.route('/graph', methods=['POST'])
 def graph():
-  param = request.args.get('parameter')
-  lat, long = request.args.get('lat'), request.args.get('long')
+  param = request.form.get('parameter')
+  lat, long = request.form.get('lat'), request.form.get('long')
   return req_get(
     'https://power.larc.nasa.gov/api/toolkit/power/visualizations/heatmaps?operation=climatological-days' +
-    f'&start=2000-01-01T00%3A00%3A00&end=2002-01-01T00%3A00%3A00&latitude={lat}&longitude={long}&community=ag&parameter={param}&format=html&units=metric'
+    f'&start=1990-01-01T00%3A00%3A00&end=2024-01-01T00%3A00%3A00&latitude={lat}&longitude={long}&community=ag&parameter={param}&format=html&units=metric'
   ).text
 
 @app.route('/about-us')
@@ -88,4 +87,4 @@ def about_us():
 
 
 if __name__ == '__main__':
-  app.run(port=8080, host='0.0.0.0', debug=True)
+  app.run(port=8080, host='127.0.0.5', debug=True)

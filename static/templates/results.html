@@ -14,9 +14,26 @@
     {% endfor %}
 </div>
 <form action='/download' method='post'>
-    <button type='submit'>Download data as CSV</button>
-</form> 
-<div class="table-container">
+    <button class="btn btn-primary" style="margin-top: 70px;" type='submit'>Download data as CSV</button>
+</form>
+<script>
+    function toggleDetails() {
+        const details = document.getElementById("table");
+        const btn = document.getElementById("toggleBtn");
+
+        if (details.style.display === "none" || details.style.display === "") {
+            details.style.display = "block";
+            btn.textContent = "Hide details...";
+        } else {
+            details.style.display = "none";
+            btn.textContent = "More details...";
+        }
+    }
+</script> 
+<div class="details" id="toggleBtn" onclick="toggleDetails()">
+    <p>More details...</p>
+</div>
+<div class="table-container" id="table" style="display: none;">
     <table class="table">
         <tr>
             <th>Year</th>

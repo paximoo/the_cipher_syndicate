@@ -14,22 +14,31 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (document.getElementById('map') != null) {
-                const map = L.map('map').setView([24.5, 73.75], 13);
+    document.addEventListener('DOMContentLoaded', () => {
+        if (document.getElementById('map') != null) {
+            const map = L.map('map').setView([24.5, 73.75], 13);
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(map);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
 
-                map.on('click', function(e) {
-                    const { lat, lng } = e.latlng;
-                    document.getElementById('latitude').value = lat;
-                    document.getElementById('longitude').value = lng;
-                });
-            }
-        });
-    </script>
+            let marker = null;
+
+            map.on('click', function(e) {
+                const { lat, lng } = e.latlng;
+
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+
+                marker = L.marker([lat, lng]).addTo(map);
+
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+            });
+        }
+    });
+</script>
 
 </head>
 <body>

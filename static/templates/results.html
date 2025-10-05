@@ -44,12 +44,11 @@
                 <th scope="col">{{ param }}</th>
             {% endfor %}
         </tr>
-        {% for reading in data %}
+        {% for ind in range(param_entries[0]|length) %}
         <tr>
-            {% for _, entry in reading.items() %}
-                {% for _, value in entry.items() %}
-                    <td scope="row">{{ value }}</td>
-                {% endfor %}
+            <td scope="row">{{ start_year + ind }}</td>
+            {% for param in param_entries %}
+                <td scope="row">{{ param[ind] }}</td>
             {% endfor %}
         </tr>
         {% endfor %}

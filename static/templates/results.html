@@ -3,16 +3,19 @@
 {% block main %}
 <center>
 <h1>{{ date }}</h1>
-<div class="grid">
+<form action='/graph' class="grid" method='post'>
+    <input type='hidden' name='long' value='{{ long }}'>
+    <input type='hidden' name='lat' value='{{ lat }}'>
     {% for param in params %}
     <div class="card border-dark mb-3">
         <div class="card-header">{{ param }}</div>
             <div class="card-body text-dark">
                 <h5 class="card-title">{{ avgs[loop.index0] }}</h5>
+                <button class='btn btn-primary' type='submit' name='parameter' value='{{ param }}'>Graph</button>
             </div>
     </div>    
     {% endfor %}
-</div>
+</form>
 <form action='/download' method='post'>
     <button class="btn btn-primary" style="margin-top: 70px;" type='submit'>Download data as CSV</button>
 </form>

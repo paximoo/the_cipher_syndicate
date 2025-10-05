@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 
 {% block main %}
-<div id="map_cont">
+<div id="map_cont" style="overflow-y: hidden;">
+    <h2 id="index_head">Select the location and date you'd like weather predictions of</h2>
     <div id="map"></div>
+    <form id='form_index' action='/' method='post' class="form-container">
+        <input name='latitude' id='latitude' type='hidden'>
+        <input name='longitude' id='longitude' type='hidden'>
+        <input name='date' id='date' type='date'>
+        <button class="btn btn-primary" type='submit'>Get predictions</button>
+    </form>
 </div>
-<form action='/' method='post' class="form-container">
-    <input name='latitude' id='latitude' type='hidden'>
-    <input name='longitude' id='longitude' type='hidden'>
-    <input name='date' id='date' type='date'>
-    <button class="btn btn-primary" type='submit'>Submit</button>
-</form>
+<script>
+</script>
 {% endblock %}
